@@ -123,77 +123,21 @@
     </div>
 
     <script>
-        // Data store for employees. Adding a 'status' property to each.
-        let employees = [
-            { id: 9857, nome: "ADEILSON FIGUEREDO DE SOUSA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
-            { id: 10379, nome: "ADRIAN BRAGA ARAUJO DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 2976, nome: "ALTIERE CORREIA VALDEZ", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
-            { id: 9949, nome: "AMANDA KETLYN SILVA NASCIMENTO", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
-            { id: 4349, nome: "ANA MARIA SOUZA LIMA", funcao: "ARTÍFICE", status: "Não definido" },
-            { id: 8690, nome: "ANDRE LUIZ FARIAS BARRETO", funcao: "TEC. ADMINISTRATIVO NM", status: "Não definido" },
-            { id: 7202, nome: "ANDRESSA SOUZA DE OLIVEIRA", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" },
-            { id: 670, nome: "ÂNGELA MARIA RIBEIRO VERISSIMO", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 922, nome: "ANGELITA RODRIGUES DE SOUZA", funcao: "AUXILIAR DE LIMPEZA", status: "Não definido" },
-            { id: 8698, nome: "ANTONIA FERREIRA DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 10842, nome: "ANTONIO DA SILVA JUNIOR", funcao: "AUXILIAR ADMINISTRATIVO 3D", status: "Não definido" },
-            { id: 7282, nome: "BRUNO DOS SANTOS SILVA", funcao: "AUXILIAR OPERACIONAL 3D", status: "Não definido" },
-            { id: 10272, nome: "CARLOS ROBSON SILVA DE ARAUJO", funcao: "SUPERVISOR (ª)", status: "Não definido" },
-            { id: 5313, nome: "CAROLAINE SILVA RODRIGUES", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
-            { id: 10688, nome: "CELINE BEZERRA DE SOUZA", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" },
-            { id: 299, nome: "CELSO DARCI DA SILVA", funcao: "ZELADOR NOTURNO", status: "Não definido" },
-            { id: 478, nome: "CIÇA MARIA CARVALHO DA SILVA", funcao: "AUXILIAR DE SERV. DIVERSOS II", status: "Não definido" },
-            { id: 3826, nome: "CLEUZENY DANTAS DE SOUZA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 7904, nome: "CRISTINA LIMA DA ROCHA", funcao: "ENCARREGADO 6D", status: "Não definido" },
-            { id: 3921, nome: "DANILA FONSECA DE OLIVEIRA", funcao: "ASSISTENTE ADMINISTRATIVO 4C", status: "Não definido" },
-            { id: 4950, nome: "DUCIEL DA SILVA OLIVEIRA FEIJO", funcao: "ENCARREGADO 5D", status: "Não definido" },
-            { id: 11060, nome: "EDUARDO CAETANO DA SILVA SOUZA", funcao: "APOIO OPERACIONAL", status: "Não definido" },
-            { id: 8699, nome: "EMILY CONCEICAO DA SILVA", funcao: "APOIO OPERACIONAL 2D", status: "Não definido" },
-            { id: 3173, nome: "EVANILDE COSTA DA SILVA", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" },
-            { id: 6344, nome: "FRANCISCA ELIZANA ELIAS PEREIRA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
-            { id: 5524, nome: "FRANCISCA LUCIANA ROCHA", funcao: "MERENDEIRA", status: "Não definido" },
-            { id: 2206, nome: "FRANCISCO IVANILDO DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 6418, nome: "GABRIELA AFONSO PEREIRA", funcao: "APOIO OPERACIONAL 1B", status: "Não definido" },
-            { id: 10989, nome: "GLADSON DE CASTRO GOMES DA SILVA", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" },
-            { id: 9950, nome: "GUILHERME MENDONÇA PEREIRA", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
-            { id: 2211, nome: "HELIO FRANÇA CARNEIRO", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 5468, nome: "INDARA DA SILVA ALMEIDA NOLASCO", funcao: "ADVOGADO", status: "Não definido" },
-            { id: 10695, nome: "JANARA CHAVES DA SILVA", funcao: "ENCARREGADO 6D", status: "Não definido" },
-            { id: 9040, nome: "JASON DE SOUZA GONÇALVES", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" },
-            { id: 5790, nome: "JOAO DOS SANTOS VIEIRA", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
-            { id: 914, nome: "JOHNE BARBOSA DE SOUZA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
-            { id: 618, nome: "JOSELY LEITAO DA COSTA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 10704, nome: "LETICIA MACIEL AVELINO", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" },
-            { id: 1564, nome: "LETICIA SOARES FERREIRA", funcao: "ENCARREGADO ACT", status: "Não definido" },
-            { id: 10940, nome: "LUCAS ANTONIO LIMA DA SILVA", funcao: "AUXILIAR OPERACIONAL", status: "Não definido" },
-            { id: 8895, nome: "LUCAS DA SILVA MAIA", funcao: "AUXILIAR ADMINISTRATIVO 3D", status: "Não definido" },
-            { id: 10251, nome: "LUCAS LIBERDADE DOS SANTOS", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
-            { id: 10248, nome: "LUCILENE MORAIS DE ARAUJO", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
-            { id: 1001, nome: "LUIZA SANTOS DA ROCHA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
-            { id: 1514, nome: "MANOEL ANTONIO DA COSTA PEREIRA", funcao: "OPERADOR DE CONVÉS", status: "Não definido" },
-            { id: 10775, nome: "MANOEL DOS SANTOS BASTOS", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
-            { id: 10609, nome: "MANOEL MENDES DE OLIVEIRA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
-            { id: 5776, nome: "MANOEL SENA DE ARAUJO", funcao: "TÉCNICO ADMINISTRATIVO NM", status: "Não definido" },
-            { id: 4051, nome: "MARCELLO LIMA SILVA", funcao: "ENCARREGADO 5D", status: "Não definido" },
-            { id: 9769, nome: "MARCELO DE OLIVEIRA DA SILVA", funcao: "GESTOR OPERACIONAL", status: "Não definido" },
-            { id: 740, nome: "MARIA MICHELE QUEIROZ", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 587, nome: "MARIA NAZARE BARBOSA DE SOUZA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 8038, nome: "MARINES LIMA MAIA DA SILVA", funcao: "ENCARREGADO 6D", status: "Não definido" },
-            { id: 9767, nome: "NATIELE SIMONE GONDIM DA ROCHA", funcao: "SUPERVISOR (ª)", status: "Não definido" },
-            { id: 126, nome: "NEUZA SAAR XAVIER", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 5835, nome: "PAULO HENRIQUE SAMPAIO DE ALBUQUERQUE", funcao: "TÉCNICO EM MANUTENÇÃO DE EQUIPAMENTOS DE INFORMÁTICA", status: "Não definido" },
-            { id: 4658, nome: "PEDRO FERNANDES COSTA", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
-            { id: 2041, nome: "RENATA SAMPAIO DE MIRANDA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 1678, nome: "RISONEIDE VAZ MENDES", funcao: "SERVENTE EM GERAL", status: "Não definido" },
-            { id: 4575, nome: "ROBERTO JOSE SANTOS DA COSTA", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
-            { id: 7720, nome: "ROMULO FELIX PERDOME", funcao: "ASSISTENTE JURIDICO 6D", status: "Não definido" },
-            { id: 9768, nome: "ROVENILSON VIANA SANTANA", funcao: "ENCARREGADO 5D", status: "Não definido" }
-        ];
+        // Data store for employees. It will be populated from localStorage or with default data.
+        let employees = [];
 
         const statusConfig = {
             'Ativo': { color: 'bg-green-500', text: 'Ativo' },
             'Pendente': { color: 'bg-yellow-500', text: 'Pendente' },
             'Não definido': { color: 'bg-gray-400', text: 'Não definido' }
         };
+
+        /**
+         * Saves the current state of the employees array to the browser's localStorage.
+         */
+        function saveData() {
+            localStorage.setItem('employeesData', JSON.stringify(employees));
+        }
 
         /**
          * Updates the dashboard cards and chart with the current data.
@@ -255,7 +199,7 @@
         }
 
         /**
-         * Updates an employee's status in the data array and triggers UI refresh.
+         * Updates an employee's status, saves the data, and triggers UI refresh.
          * @param {HTMLSelectElement} selectElement - The select element that triggered the change.
          * @param {number} employeeId - The ID of the employee to update.
          */
@@ -266,27 +210,102 @@
                 employee.status = newStatus;
             }
             
-            // Update the dot color in the specific row
             const row = selectElement.closest('tr');
             const dot = row.querySelector('.status-dot');
             Object.values(statusConfig).forEach(s => dot.classList.remove(s.color));
             dot.classList.add(statusConfig[newStatus].color);
 
+            saveData();
             updateDashboard();
         }
 
         /**
-         * Deletes an employee from the data array and re-renders the UI.
+         * Deletes an employee, saves the data, and re-renders the UI.
          * @param {number} employeeId - The ID of the employee to delete.
          */
         function deleteRow(employeeId) {
             employees = employees.filter(e => e.id !== employeeId);
+            saveData();
             renderTable();
             updateDashboard();
         }
 
         // Initial setup when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
+            const savedEmployees = localStorage.getItem('employeesData');
+            
+            if (savedEmployees) {
+                // If data exists in localStorage, use it.
+                employees = JSON.parse(savedEmployees);
+            } else {
+                // Otherwise, use the default data and save it for the first time.
+                employees = [
+                    { id: 9857, nome: "ADEILSON FIGUEREDO DE SOUSA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
+                    { id: 10379, nome: "ADRIAN BRAGA ARAUJO DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 2976, nome: "ALTIERE CORREIA VALDEZ", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
+                    { id: 9949, nome: "AMANDA KETLYN SILVA NASCIMENTO", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
+                    { id: 4349, nome: "ANA MARIA SOUZA LIMA", funcao: "ARTÍFICE", status: "Não definido" },
+                    { id: 8690, nome: "ANDRE LUIZ FARIAS BARRETO", funcao: "TEC. ADMINISTRATIVO NM", status: "Não definido" },
+                    { id: 7202, nome: "ANDRESSA SOUZA DE OLIVEIRA", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" },
+                    { id: 670, nome: "ÂNGELA MARIA RIBEIRO VERISSIMO", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 922, nome: "ANGELITA RODRIGUES DE SOUZA", funcao: "AUXILIAR DE LIMPEZA", status: "Não definido" },
+                    { id: 8698, nome: "ANTONIA FERREIRA DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 10842, nome: "ANTONIO DA SILVA JUNIOR", funcao: "AUXILIAR ADMINISTRATIVO 3D", status: "Não definido" },
+                    { id: 7282, nome: "BRUNO DOS SANTOS SILVA", funcao: "AUXILIAR OPERACIONAL 3D", status: "Não definido" },
+                    { id: 10272, nome: "CARLOS ROBSON SILVA DE ARAUJO", funcao: "SUPERVISOR (ª)", status: "Não definido" },
+                    { id: 5313, nome: "CAROLAINE SILVA RODRIGUES", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
+                    { id: 10688, nome: "CELINE BEZERRA DE SOUZA", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" },
+                    { id: 299, nome: "CELSO DARCI DA SILVA", funcao: "ZELADOR NOTURNO", status: "Não definido" },
+                    { id: 478, nome: "CIÇA MARIA CARVALHO DA SILVA", funcao: "AUXILIAR DE SERV. DIVERSOS II", status: "Não definido" },
+                    { id: 3826, nome: "CLEUZENY DANTAS DE SOUZA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 7904, nome: "CRISTINA LIMA DA ROCHA", funcao: "ENCARREGADO 6D", status: "Não definido" },
+                    { id: 3921, nome: "DANILA FONSECA DE OLIVEIRA", funcao: "ASSISTENTE ADMINISTRATIVO 4C", status: "Não definido" },
+                    { id: 4950, nome: "DUCIEL DA SILVA OLIVEIRA FEIJO", funcao: "ENCARREGADO 5D", status: "Não definido" },
+                    { id: 11060, nome: "EDUARDO CAETANO DA SILVA SOUZA", funcao: "APOIO OPERACIONAL", status: "Não definido" },
+                    { id: 8699, nome: "EMILY CONCEICAO DA SILVA", funcao: "APOIO OPERACIONAL 2D", status: "Não definido" },
+                    { id: 3173, nome: "EVANILDE COSTA DA SILVA", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" },
+                    { id: 6344, nome: "FRANCISCA ELIZANA ELIAS PEREIRA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
+                    { id: 5524, nome: "FRANCISCA LUCIANA ROCHA", funcao: "MERENDEIRA", status: "Não definido" },
+                    { id: 2206, nome: "FRANCISCO IVANILDO DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 6418, nome: "GABRIELA AFONSO PEREIRA", funcao: "APOIO OPERACIONAL 1B", status: "Não definido" },
+                    { id: 10989, nome: "GLADSON DE CASTRO GOMES DA SILVA", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" },
+                    { id: 9950, nome: "GUILHERME MENDONÇA PEREIRA", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
+                    { id: 2211, nome: "HELIO FRANÇA CARNEIRO", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 5468, nome: "INDARA DA SILVA ALMEIDA NOLASCO", funcao: "ADVOGADO", status: "Não definido" },
+                    { id: 10695, nome: "JANARA CHAVES DA SILVA", funcao: "ENCARREGADO 6D", status: "Não definido" },
+                    { id: 9040, nome: "JASON DE SOUZA GONÇALVES", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" },
+                    { id: 5790, nome: "JOAO DOS SANTOS VIEIRA", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
+                    { id: 914, nome: "JOHNE BARBOSA DE SOUZA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
+                    { id: 618, nome: "JOSELY LEITAO DA COSTA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 10704, nome: "LETICIA MACIEL AVELINO", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" },
+                    { id: 1564, nome: "LETICIA SOARES FERREIRA", funcao: "ENCARREGADO ACT", status: "Não definido" },
+                    { id: 10940, nome: "LUCAS ANTONIO LIMA DA SILVA", funcao: "AUXILIAR OPERACIONAL", status: "Não definido" },
+                    { id: 8895, nome: "LUCAS DA SILVA MAIA", funcao: "AUXILIAR ADMINISTRATIVO 3D", status: "Não definido" },
+                    { id: 10251, nome: "LUCAS LIBERDADE DOS SANTOS", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
+                    { id: 10248, nome: "LUCILENE MORAIS DE ARAUJO", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" },
+                    { id: 1001, nome: "LUIZA SANTOS DA ROCHA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
+                    { id: 1514, nome: "MANOEL ANTONIO DA COSTA PEREIRA", funcao: "OPERADOR DE CONVÉS", status: "Não definido" },
+                    { id: 10775, nome: "MANOEL DOS SANTOS BASTOS", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
+                    { id: 10609, nome: "MANOEL MENDES DE OLIVEIRA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" },
+                    { id: 5776, nome: "MANOEL SENA DE ARAUJO", funcao: "TÉCNICO ADMINISTRATIVO NM", status: "Não definido" },
+                    { id: 4051, nome: "MARCELLO LIMA SILVA", funcao: "ENCARREGADO 5D", status: "Não definido" },
+                    { id: 9769, nome: "MARCELO DE OLIVEIRA DA SILVA", funcao: "GESTOR OPERACIONAL", status: "Não definido" },
+                    { id: 740, nome: "MARIA MICHELE QUEIROZ", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 587, nome: "MARIA NAZARE BARBOSA DE SOUZA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 8038, nome: "MARINES LIMA MAIA DA SILVA", funcao: "ENCARREGADO 6D", status: "Não definido" },
+                    { id: 9767, nome: "NATIELE SIMONE GONDIM DA ROCHA", funcao: "SUPERVISOR (ª)", status: "Não definido" },
+                    { id: 126, nome: "NEUZA SAAR XAVIER", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 5835, nome: "PAULO HENRIQUE SAMPAIO DE ALBUQUERQUE", funcao: "TÉCNICO EM MANUTENÇÃO DE EQUIPAMENTOS DE INFORMÁTICA", status: "Não definido" },
+                    { id: 4658, nome: "PEDRO FERNANDES COSTA", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
+                    { id: 2041, nome: "RENATA SAMPAIO DE MIRANDA", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 1678, nome: "RISONEIDE VAZ MENDES", funcao: "SERVENTE EM GERAL", status: "Não definido" },
+                    { id: 4575, nome: "ROBERTO JOSE SANTOS DA COSTA", funcao: "AGENTE DE PORTARIA", status: "Não definido" },
+                    { id: 7720, nome: "ROMULO FELIX PERDOME", funcao: "ASSISTENTE JURIDICO 6D", status: "Não definido" },
+                    { id: 9768, nome: "ROVENILSON VIANA SANTANA", funcao: "ENCARREGADO 5D", status: "Não definido" }
+                ];
+                saveData();
+            }
+            
             renderTable();
             updateDashboard();
         });
