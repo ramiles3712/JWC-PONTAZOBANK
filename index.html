@@ -16,25 +16,40 @@
              background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
         }
         .chart-bar > div { transition: width 0.5s ease-in-out; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #38b2ac; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="p-4 sm:p-6 md:p-8">
 
-    <!-- Firebase Config Modal -->
+    <!-- Supabase Config Modal -->
     <div id="config-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
-            <h2 class="text-2xl font-bold mb-4">Configuração do Firebase</h2>
-            <p class="text-gray-600 mb-6">Por favor, insira os dados de configuração do seu projeto Firebase. Pode encontrá-los nas configurações do seu projeto (Project Settings) > Geral (General) > na secção "Your apps".</p>
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full overflow-y-auto max-h-screen">
+            <h2 class="text-2xl font-bold mb-4">Configuração do Supabase</h2>
+            <p class="text-gray-600 mb-6">Por favor, insira o seu URL e a Chave Anónima (anon key) do seu projeto Supabase. Pode encontrá-los em <strong>Project Settings > API</strong>.</p>
+            
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+              <p class="font-bold">Passo 1: Criar a Tabela</p>
+              <p>Crie uma tabela chamada <code>employees_data</code> com uma coluna <code>id</code> (int8, primary key) e uma coluna <code>data</code> (jsonb).</p>
+            </div>
+
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+              <p class="font-bold">Passo 2: Criar Regra de Acesso (Policy)</p>
+              <p class="mb-2">O Supabase protege as suas tabelas por defeito. Para permitir que a aplicação funcione, siga estes passos:</p>
+              <ol class="list-decimal list-inside text-sm space-y-1">
+                  <li>No seu painel Supabase, vá a <strong>Authentication > Policies</strong>.</li>
+                  <li>Encontre a tabela <code>employees_data</code> e clique em <strong>New Policy</strong>.</li>
+                  <li>Selecione a opção <strong>"Get started quickly"</strong>.</li>
+                  <li>Escolha o template <strong>"Enable access to everyone"</strong>.</li>
+                  <li>Verifique se as opções `SELECT`, `INSERT`, `UPDATE`, `DELETE` estão ativadas.</li>
+                  <li>Clique em <strong>Review</strong> e depois em <strong>Save policy</strong>.</li>
+              </ol>
+            </div>
+
             <form id="config-form" class="space-y-4">
-                <input required class="w-full p-2 border rounded" type="text" id="apiKey" placeholder="apiKey">
-                <input required class="w-full p-2 border rounded" type="text" id="authDomain" placeholder="authDomain">
-                <input required class="w-full p-2 border rounded" type="text" id="projectId" placeholder="projectId">
-                <input required class="w-full p-2 border rounded" type="text" id="storageBucket" placeholder="storageBucket">
-                <input required class="w-full p-2 border rounded" type="text" id="messagingSenderId" placeholder="messagingSenderId">
-                <input required class="w-full p-2 border rounded" type="text" id="appId" placeholder="appId">
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Salvar e Conectar</button>
+                <input required class="w-full p-2 border rounded" type="url" id="supabaseUrl" placeholder="Supabase Project URL">
+                <input required class="w-full p-2 border rounded" type="text" id="supabaseKey" placeholder="Supabase Anon Key">
+                <button type="submit" class="w-full bg-teal-600 text-white font-bold py-2 px-4 rounded hover:bg-teal-700">Salvar e Conectar</button>
             </form>
         </div>
     </div>
@@ -85,13 +100,10 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
         let employees = [];
-        let db;
-        let dataDocRef;
+        let supabase;
 
         const statusConfig = { 'Ativo': { color: 'bg-green-500' }, 'Pendente': { color: 'bg-yellow-500' }, 'Não definido': { color: 'bg-gray-400' } };
         const defaultEmployees = [ { id: 9857, nome: "ADEILSON FIGUEREDO DE SOUSA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" }, { id: 10379, nome: "ADRIAN BRAGA ARAUJO DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 2976, nome: "ALTIERE CORREIA VALDEZ", funcao: "AGENTE DE PORTARIA", status: "Não definido" }, { id: 9949, nome: "AMANDA KETLYN SILVA NASCIMENTO", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" }, { id: 4349, nome: "ANA MARIA SOUZA LIMA", funcao: "ARTÍFICE", status: "Não definido" }, { id: 8690, nome: "ANDRE LUIZ FARIAS BARRETO", funcao: "TEC. ADMINISTRATIVO NM", status: "Não definido" }, { id: 7202, nome: "ANDRESSA SOUZA DE OLIVEIRA", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" }, { id: 670, nome: "ÂNGELA MARIA RIBEIRO VERISSIMO", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 922, nome: "ANGELITA RODRIGUES DE SOUZA", funcao: "AUXILIAR DE LIMPEZA", status: "Não definido" }, { id: 8698, nome: "ANTONIA FERREIRA DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 10842, nome: "ANTONIO DA SILVA JUNIOR", funcao: "AUXILIAR ADMINISTRATIVO 3D", status: "Não definido" }, { id: 7282, nome: "BRUNO DOS SANTOS SILVA", funcao: "AUXILIAR OPERACIONAL 3D", status: "Não definido" }, { id: 10272, nome: "CARLOS ROBSON SILVA DE ARAUJO", funcao: "SUPERVISOR (ª)", status: "Não definido" }, { id: 5313, nome: "CAROLAINE SILVA RODRIGUES", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" }, { id: 10688, nome: "CELINE BEZERRA DE SOUZA", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" }, { id: 299, nome: "CELSO DARCI DA SILVA", funcao: "ZELADOR NOTURNO", status: "Não definido" }, { id: 478, nome: "CIÇA MARIA CARVALHO DA SILVA", funcao: "AUXILIAR DE SERV. DIVERSOS II", status: "Não definido" }, { id: 3826, nome: "CLEUZENY DANTAS DE SOUZA", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 7904, nome: "CRISTINA LIMA DA ROCHA", funcao: "ENCARREGADO 6D", status: "Não definido" }, { id: 3921, nome: "DANILA FONSECA DE OLIVEIRA", funcao: "ASSISTENTE ADMINISTRATIVO 4C", status: "Não definido" }, { id: 4950, nome: "DUCIEL DA SILVA OLIVEIRA FEIJO", funcao: "ENCARREGADO 5D", status: "Não definido" }, { id: 11060, nome: "EDUARDO CAETANO DA SILVA SOUZA", funcao: "APOIO OPERACIONAL", status: "Não definido" }, { id: 8699, nome: "EMILY CONCEICAO DA SILVA", funcao: "APOIO OPERACIONAL 2D", status: "Não definido" }, { id: 3173, nome: "EVANILDE COSTA DA SILVA", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" }, { id: 6344, nome: "FRANCISCA ELIZANA ELIAS PEREIRA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" }, { id: 5524, nome: "FRANCISCA LUCIANA ROCHA", funcao: "MERENDEIRA", status: "Não definido" }, { id: 2206, nome: "FRANCISCO IVANILDO DA SILVA", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 6418, nome: "GABRIela AFONSO PEREIRA", funcao: "APOIO OPERACIONAL 1B", status: "Não definido" }, { id: 10989, nome: "GLADSON DE CASTRO GOMES DA SILVA", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" }, { id: 9950, nome: "GUILHERME MENDONÇA PEREIRA", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" }, { id: 2211, nome: "HELIO FRANÇA CARNEIRO", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 5468, nome: "INDARA DA SILVA ALMEIDA NOLASCO", funcao: "ADVOGADO", status: "Não definido" }, { id: 10695, nome: "JANARA CHAVES DA SILVA", funcao: "ENCARREGADO 6D", status: "Não definido" }, { id: 9040, nome: "JASON DE SOUZA GONÇALVES", funcao: "AUXILIAR ADMINISTRATIVO 2D", status: "Não definido" }, { id: 5790, nome: "JOAO DOS SANTOS VIEIRA", funcao: "AGENTE DE PORTARIA", status: "Não definido" }, { id: 914, nome: "JOHNE BARBOSA DE SOUZA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" }, { id: 618, nome: "JOSELY LEITAO DA COSTA", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 10704, nome: "LETICIA MACIEL AVELINO", funcao: "APOIO ADMINISTRATIVO", status: "Não definido" }, { id: 1564, nome: "LETICIA SOARES FERREIRA", funcao: "ENCARREGADO ACT", status: "Não definido" }, { id: 10940, nome: "LUCAS ANTONIO LIMA DA SILVA", funcao: "AUXILIAR OPERACIONAL", status: "Não definido" }, { id: 8895, nome: "LUCAS DA SILVA MAIA", funcao: "AUXILIAR ADMINISTRATIVO 3D", status: "Não definido" }, { id: 10251, nome: "LUCAS LIBERDADE DOS SANTOS", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" }, { id: 10248, nome: "LUCILENE MORAIS DE ARAUJO", funcao: "APOIO ADMINISTRATIVO 1D", status: "Não definido" }, { id: 1001, nome: "LUIZA SANTOS DA ROCHA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" }, { id: 1514, nome: "MANOEL ANTONIO DA COSTA PEREIRA", funcao: "OPERADOR DE CONVÉS", status: "Não definido" }, { id: 10775, nome: "MANOEL DOS SANTOS BASTOS", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" }, { id: 10609, nome: "MANOEL MENDES DE OLIVEIRA", funcao: "AUXILIAR DE SERV. DIVERSOS", status: "Não definido" }, { id: 5776, nome: "MANOEL SENA DE ARAUJO", funcao: "TÉCNICO ADMINISTRATIVO NM", status: "Não definido" }, { id: 4051, nome: "MARCELLO LIMA SILVA", funcao: "ENCARREGADO 5D", status: "Não definido" }, { id: 9769, nome: "MARCELO DE OLIVEIRA DA SILVA", funcao: "GESTOR OPERACIONAL", status: "Não definido" }, { id: 740, nome: "MARIA MICHELE QUEIROZ", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 587, nome: "MARIA NAZARE BARBOSA DE SOUZA", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 8038, nome: "MARINES LIMA MAIA DA SILVA", funcao: "ENCARREGADO 6D", status: "Não definido" }, { id: 9767, nome: "NATIELE SIMONE GONDIM DA ROCHA", funcao: "SUPERVISOR (ª)", status: "Não definido" }, { id: 126, nome: "NEUZA SAAR XAVIER", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 5835, nome: "PAULO HENRIQUE SAMPAIO DE ALBUQUERQUE", funcao: "TÉCNICO EM MANUTENÇÃO DE EQUIPAMENTOS DE INFORMÁTICA", status: "Não definido" }, { id: 4658, nome: "PEDRO FERNANDES COSTA", funcao: "AGENTE DE PORTARIA", status: "Não definido" }, { id: 2041, nome: "RENATA SAMPAIO DE MIRANDA", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 1678, nome: "RISONEIDE VAZ MENDES", funcao: "SERVENTE EM GERAL", status: "Não definido" }, { id: 4575, nome: "ROBERTO JOSE SANTOS DA COSTA", funcao: "AGENTE DE PORTARIA", status: "Não definido" }, { id: 7720, nome: "ROMULO FELIX PERDOME", funcao: "ASSISTENTE JURIDICO 6D", status: "Não definido" }, { id: 9768, nome: "ROVENILSON VIANA SANTANA", funcao: "ENCARREGADO 5D", status: "Não definido" } ];
@@ -141,60 +153,88 @@
         }
         
         async function saveData() {
-            if (dataDocRef) { await setDoc(dataDocRef, { employees }); }
+            if (!supabase) return;
+            const { error } = await supabase.from('employees_data').upsert({ id: 1, data: employees });
+            if (error) console.error('Error saving data:', error);
         }
 
         function handleUIEvent(e) {
             const target = e.target;
+            let dataChanged = false;
+
             if (target.classList.contains('status-select')) {
                 const employeeId = Number(target.dataset.id);
                 const newStatus = target.value;
                 const employee = employees.find(emp => emp.id === employeeId);
-                if (employee) { employee.status = newStatus; saveData(); }
+                if (employee && employee.status !== newStatus) {
+                    employee.status = newStatus;
+                    dataChanged = true;
+                }
             }
             if (target.classList.contains('delete-btn')) {
                 const employeeId = Number(target.dataset.id);
+                const initialLength = employees.length;
                 employees = employees.filter(emp => emp.id !== employeeId);
+                if (employees.length < initialLength) {
+                    dataChanged = true;
+                }
+            }
+
+            if (dataChanged) {
+                renderTable();
+                updateDashboard();
                 saveData();
             }
         }
 
-        async function initializeFirebase(firebaseConfig) {
+        async function initializeSupabase(supabaseUrl, supabaseKey) {
             try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                const auth = getAuth(app);
-                await signInAnonymously(auth);
+                supabase = createClient(supabaseUrl, supabaseKey);
                 
-                // Simplified path for a shared document
-                dataDocRef = doc(db, 'employee-dashboard', 'shared-data');
+                const { data, error } = await supabase.from('employees_data').select('data').eq('id', 1).single();
+                
+                if (error && error.code !== 'PGRST116') {
+                    throw error;
+                }
 
-                onSnapshot(dataDocRef, (snapshot) => {
-                    if (snapshot.exists()) {
-                        employees = snapshot.data().employees;
-                    } else {
-                        employees = defaultEmployees;
-                        saveData();
+                if (data && data.data) {
+                    employees = data.data;
+                } else {
+                    employees = defaultEmployees;
+                    await saveData();
+                }
+                
+                renderTable();
+                updateDashboard();
+                document.getElementById('loading-overlay').style.display = 'none';
+                
+                const syncStatus = document.getElementById('sync-status');
+                syncStatus.innerHTML = `<svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"></circle></svg> Sincronizado`;
+                syncStatus.classList.remove('bg-yellow-100', 'text-yellow-800');
+                syncStatus.classList.add('bg-green-100', 'text-green-800');
+
+                supabase.channel('employees_data_changes')
+                  .on('postgres_changes', { event: '*', schema: 'public', table: 'employees_data' }, payload => {
+                    if (payload.new && payload.new.data) {
+                        employees = payload.new.data;
+                        renderTable();
+                        updateDashboard();
                     }
-                    renderTable();
-                    updateDashboard();
-                    document.getElementById('loading-overlay').style.display = 'none';
-                    const syncStatus = document.getElementById('sync-status');
-                    syncStatus.innerHTML = `<svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"></circle></svg> Sincronizado`;
-                    syncStatus.classList.remove('bg-yellow-100', 'text-yellow-800');
-                    syncStatus.classList.add('bg-green-100', 'text-green-800');
-                });
+                  })
+                  .subscribe();
+
             } catch (error) {
-                console.error("Firebase Initialization Failed:", error);
+                console.error("Supabase Initialization Failed:", error);
                 const loadingContent = document.getElementById('loading-content');
-                loadingContent.innerHTML = `<p class="text-white text-center">Falha na ligação ao Firebase.<br>Verifique a sua configuração e atualize a página.</p>`;
+                loadingContent.innerHTML = `<p class="text-white text-center">Falha na ligação ao Supabase.<br>Verifique a sua configuração e atualize a página.</p>`;
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedConfig = localStorage.getItem('firebaseConfig');
+            const savedConfig = localStorage.getItem('supabaseConfig');
             if (savedConfig) {
-                initializeFirebase(JSON.parse(savedConfig));
+                const { url, key } = JSON.parse(savedConfig);
+                initializeSupabase(url, key);
             } else {
                 document.getElementById('loading-overlay').style.display = 'none';
                 document.getElementById('config-modal').classList.remove('hidden');
@@ -202,18 +242,13 @@
 
             document.getElementById('config-form').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const firebaseConfig = {
-                    apiKey: document.getElementById('apiKey').value,
-                    authDomain: document.getElementById('authDomain').value,
-                    projectId: document.getElementById('projectId').value,
-                    storageBucket: document.getElementById('storageBucket').value,
-                    messagingSenderId: document.getElementById('messagingSenderId').value,
-                    appId: document.getElementById('appId').value,
-                };
-                localStorage.setItem('firebaseConfig', JSON.stringify(firebaseConfig));
+                const supabaseUrl = document.getElementById('supabaseUrl').value;
+                const supabaseKey = document.getElementById('supabaseKey').value;
+                const config = { url: supabaseUrl, key: supabaseKey };
+                localStorage.setItem('supabaseConfig', JSON.stringify(config));
                 document.getElementById('config-modal').classList.add('hidden');
                 document.getElementById('loading-overlay').style.display = 'flex';
-                initializeFirebase(firebaseConfig);
+                initializeSupabase(supabaseUrl, supabaseKey);
             });
 
             document.getElementById('employee-table-body').addEventListener('change', handleUIEvent);
